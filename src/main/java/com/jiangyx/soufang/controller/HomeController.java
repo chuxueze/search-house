@@ -13,4 +13,24 @@ public class HomeController {
         model.addAttribute("name", "mickle");
         return "index";
     }
+
+    @GetMapping("/404")
+    public String notFoundPage() {
+        return "404";
+    }
+
+    @GetMapping("/403")
+    public String accessError() {
+        return "403";
+    }
+
+    @GetMapping("/500")
+    public String InternalError() {
+        return "500";
+    }
+
+    @GetMapping("/logout")
+    public String logoutPage() {
+        return "logout";
+    }
 }
