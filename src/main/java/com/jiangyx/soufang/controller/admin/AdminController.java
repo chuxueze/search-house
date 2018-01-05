@@ -25,4 +25,9 @@ public class AdminController {
     public String adminLoginPage() {
         return "admin/login";
     }
+
+    @GetMapping("/add/house")
+    public String addHousePage() {
+        return "admin/house-add";
+    }
 }

@@ -31,7 +31,7 @@ public class AuthProvider implements AuthenticationProvider {
             throw new AuthenticationCredentialsNotFoundException("用户不存在");
         }
         if (this.passwordEncoder.isPasswordValid(user.getPassword(), password, user.getId())) {
-            return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorityList());
         }
         throw new BadCredentialsException("认证异常");
     }

@@ -1,6 +1,8 @@
 package com.jiangyx.soufang.config;
 
 import com.jiangyx.soufang.security.AuthProvider;
+import com.jiangyx.soufang.security.LoginAuthFailHandler;
+import com.jiangyx.soufang.security.LoginUrlEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -28,9 +30,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/api/user/**").hasAnyRole("ADMIN", "USER")
                 .and()
+                // 登录表单配置
                 .formLogin()
                 .loginProcessingUrl("/login")   // 配置角色登录处理入口
-                .and();
+                .failureHandler(authFailHandler())
+                .and()
+                // 登出配置
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/logout/page")
+                .deleteCookies("JESSIONID") // 删除Cookies
+                .invalidateHttpSession(true)    // 使会话失效
+                .and()
+                // 异常处理配置
+                .exceptionHandling()
+                .authenticationEntryPoint(urlEntryPoint())
+                .accessDeniedPage("/403");
 
         http.csrf().disable();
         // 开启同源策略，不然iframe会报错
@@ -50,5 +65,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthProvider authProvider() {
         return new AuthProvider();
+    }
+
+    @Bean
+    public LoginUrlEntryPoint urlEntryPoint() {
+        return new LoginUrlEntryPoint("/user/login");
+    }
+
+    @Bean
+    public LoginAuthFailHandler authFailHandler() {
+        return new LoginAuthFailHandler(urlEntryPoint());
     }
 }
