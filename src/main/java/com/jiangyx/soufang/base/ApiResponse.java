@@ -72,6 +72,7 @@ public class ApiResponse {
     public enum Status {
         SUCCESS(200, "请求成功"),
         BAD_REQUEST(400, "错误请求"),
+        NOT_FOUND(404, "NOT FOUND"),
         INTERNAL_SERVER_ERROR(500, "未知服务器错误"),
         NOT_VALID_PARAM(40005, "错误参数"),
         NOT_SUPPORTED_OPERATION(40006, "非法操作"),
