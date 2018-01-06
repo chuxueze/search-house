@@ -1,6 +1,12 @@
 package com.jiangyx.soufang.controller.admin;
 
+import com.google.gson.Gson;
 import com.jiangyx.soufang.base.ApiResponse;
+import com.jiangyx.soufang.dto.QiNiuPutResult;
+import com.jiangyx.soufang.service.house.IQiNiuService;
+import com.qiniu.common.QiniuException;
+import com.qiniu.http.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 后台管理公职器
@@ -15,6 +22,12 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+
+    @Autowired
+    private IQiNiuService qiNiuService;
+
+    @Autowired
+    private Gson gson;
 
     @GetMapping(value = "/center")
     public String adminCenterPage() {
@@ -42,14 +55,25 @@ public class AdminController {
         if (file.isEmpty()) {
             return ApiResponse.ofStatus(ApiResponse.Status.NOT_VALID_PARAM);
         }
-        String filename = file.getOriginalFilename();
-        File target = new File("/home/jiangyx/IdeaProjects/sou-fang/tmp/" + filename);
         try {
-            file.transferTo(target);
+            InputStream inputStream = file.getInputStream();
+            Response response = qiNiuService.uploadFile(inputStream);
+            if (response.isOK()) {
+                QiNiuPutResult qiNiuPutResult = gson.fromJson(response.bodyString(), QiNiuPutResult.class);
+                return ApiResponse.ofSuccess(response);
+            } else {
+                return ApiResponse.ofMessage(response.statusCode, response.getInfo());
+            }
+        } catch (QiniuException e) {
+          Response response = e.response;
+            try {
+                return ApiResponse.ofMessage(response.statusCode, response.bodyString());
+            } catch (QiniuException e1) {
+                e1.printStackTrace();
+                return ApiResponse.ofStatus(ApiResponse.Status.INTERNAL_SERVER_ERROR);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
             return ApiResponse.ofStatus(ApiResponse.Status.INTERNAL_SERVER_ERROR);
         }
-        return ApiResponse.ofSuccess(null);
     }
 }
