@@ -49,6 +49,11 @@ public class AdminController {
         return "admin/house-add";
     }
 
+    /**
+     * 图片上传接口
+     * @param file      文件
+     * @return          响应参数
+     */
     @PostMapping(value = "/upload/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public ApiResponse uploadPhoto(@RequestParam("file")MultipartFile file) {

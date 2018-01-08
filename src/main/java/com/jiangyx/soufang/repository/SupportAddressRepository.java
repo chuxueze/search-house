@@ -12,4 +12,6 @@ public interface SupportAddressRepository extends JpaRepository<SupportAddress, 
      * @return
      */
     List<SupportAddress> findAllByLevel(String level);
+
+    List<SupportAddress> findAllByBelongTo(String belong);
 }

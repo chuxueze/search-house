@@ -1,5 +1,6 @@
-package com.jiangyx.soufang.service.house;
+package com.jiangyx.soufang.service.house.impl;
 
+import com.jiangyx.soufang.service.house.IQiNiuService;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
